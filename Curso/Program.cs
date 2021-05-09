@@ -1,4 +1,7 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using CursoEFCore.Data;
 
 namespace CursoEFCore
 {
@@ -6,7 +9,12 @@ namespace CursoEFCore
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            using var db = new ApplicationContext();
+            var exists = db.Database.GetPendingMigrations().Any();
+            if (exists) 
+            {
+                // ..
+            }
         }
     }
 }
