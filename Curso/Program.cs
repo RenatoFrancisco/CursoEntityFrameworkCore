@@ -4,6 +4,7 @@ using CursoEFCore.Data;
 using CursoEFCore.Domain;
 using CursoEFCore.ValueObjects;
 using System;
+using System.Collections.Generic;
 
 namespace CursoEFCore
 {
@@ -20,7 +21,9 @@ namespace CursoEFCore
 
             // InserirDados();
             // InserirDadosEmMassa();
-            ConsultaDados();
+            // ConsultaDados();
+            // CadastrarPedido();
+            ConsultaPedidoCarregamentoAdiantado();
         }
 
         private static void InserirDados()
@@ -82,5 +85,47 @@ namespace CursoEFCore
                 db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
             }
         }
+
+        private static void CadastrarPedido() 
+        {
+            using var db = new ApplicationContext();
+
+            var cliente = db.Clientes.FirstOrDefault();
+            var produto = db.Produtos.FirstOrDefault();
+
+            var pedido = new Pedido
+            {
+                ClienteId = cliente.Id,
+                InciadoEm = DateTime.Now,
+                FinalizadoEm = DateTime.Now,
+                Observacao = "Pedido Teste",
+                Status = StatusPedido.Analise,
+                TipoFrete = TipoFrete.SemFrete,
+                Itens = new List<PedidoItem>
+                {
+                    new PedidoItem 
+                    {
+                        ProdutoId = produto.Id,
+                        Desconto = 0,
+                        Quantidade = 1,
+                        Valor = 10,
+                    }   
+                }
+            };
+
+            db.Pedidos.Add(pedido);
+            db.SaveChanges();
+        }
+    
+        private static void ConsultaPedidoCarregamentoAdiantado()
+        {
+            using var db = new ApplicationContext();
+            var pedidos = db.Pedidos
+                .Include(p => p.Itens)
+                .ThenInclude(p => p.Produto)
+                .ToList();
+                
+            Console.WriteLine(pedidos.Count);
+        }    
     }
 }
