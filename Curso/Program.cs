@@ -24,7 +24,8 @@ namespace CursoEFCore
             // ConsultaDados();
             // CadastrarPedido();
             // ConsultaPedidoCarregamentoAdiantado();
-            AtualizarDados();
+            // AtualizarDados();
+            RemoverRegistro();
         }
 
         private static void InserirDados()
@@ -142,6 +143,16 @@ namespace CursoEFCore
             };
 
             db.Entry(cliente).CurrentValues.SetValues(clienteDesconectado);
+            db.SaveChanges();
+        }
+
+        private static void RemoverRegistro()
+        {
+            using var db = new ApplicationContext();
+            var cliente = db.Clientes.Find(1);
+            // db.Remove(cliente);
+            // db.Entry(cliente).State = EntityState.Deleted;
+            db.Clientes.Remove(cliente);
             db.SaveChanges();
         }
     }
